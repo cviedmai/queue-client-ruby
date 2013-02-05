@@ -18,9 +18,8 @@ class Viki::Queue::Runner
   def self.process(queue, router)
     event = Viki::Queue.poll(queue)
     unless event.nil?
-      parsed = JSON.parse(event)
-      method = "#{parsed['action']}_#{parsed['resource']}"
-      if router.send(method.to_sym, parsed) == true
+      method = "#{event['action']}_#{event['resource']}"
+      if router.send(method.to_sym, event) == true
         Viki::Queue.close(queue)
       end
     end
