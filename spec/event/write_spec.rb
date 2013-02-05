@@ -17,6 +17,22 @@ describe Viki::Queue::Event do
       Viki::Queue::Event.delete(:application, '23a')
     end
 
+    it "writes multiple events at once" do
+      http = mock(http)
+      res = mock(http)
+      Net::HTTP.any_instance.stub(:start).and_yield http
+      http.should_receive(:request) do |request|
+        request.method.should == "POST"
+        request.path.should == '/v1/events.json'
+        JSON.parse(request.body).should == [
+          {'action' => 'create', 'id' => '1v', 'resource' => 'video'},
+          {'action' => 'update', 'id' => '1u', 'resource' => 'user'},
+          {'action' => 'delete', 'id' => '1c', 'resource' => 'container'}]
+        FakeResponse.new('201', '{"ok":true}')
+      end
+      Viki::Queue::Event.bulk([:create, :video, '1v'], [:update, :user, '1u'], [:delete, :container, '1c'])
+    end
+
     private
     def assert(resource, id, action)
       http = mock(http)

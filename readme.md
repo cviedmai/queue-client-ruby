@@ -1,30 +1,37 @@
 #Queue
 ## Configuration
-    Viki::Queue.configure |c|
+    Viki::Queue.configure do |c|
       c.host = 'queue.dev.viki.io'
       c.port = 80
     end
 It defaults to production queues!
 
-## Queue creation
+## Creation
 Before being able to consume from a queue, you must first create it:
 
     Viki::Queue.create('gaia_applications', ['application', 'user'])
 
 This creates a queue named *gaia_applications* which will monitor the *application* and *user* resources. An error is raised on failure
 
-## Queue deletion
+## Deletion
 You can delete a queue an all the events that are queued:
 
     Viki::Queue.delete('gaia_applications')
 
 #Events
 ## Writing
-Use the `create`, `update` and `delete` methods. An exception will be raised on failure
+Use the `create`, `update` and `delete` methods. An exception will be raised on failure.
 
     Viki::Queue::Event.create(:application, '38a')
     Viki::Queue::Event.update(:user, '9003u')
     Viki::Queue::Event.delete(:container, '50c')
+
+### Bulk write
+It is possible to do a bulk write of multiple events.
+
+    Viki::Queue::Event::Bulk([:create, :video, '1v'], [:update, :user, '1u'], [:delete, :container, '1c'])
+
+The events will be writen in the order that they appear on the parameters.
 
 ## Consumption
 Queues' events can be consumed in one of two ways.

@@ -14,22 +14,30 @@ class Viki::Queue::Event
   end
 
   def self.create(resource, id)
-    self.write(resource, id, :create)
+    self.write(to_hash([:create, resource, id]))
   end
 
   def self.update(resource, id)
-    self.write(resource, id, :update)
+    self.write(to_hash([:update, resource, id]))
   end
 
   def self.delete(resource, id)
-    self.write(resource, id, :delete)
+    self.write(to_hash([:delete, resource, id]))
+  end
+
+  def self.bulk(*events)
+    self.write(events.map {|e| to_hash(e)})
   end
 
   private
 
-  def self.write(resource, id, action)
-    res = Viki::Queue::Http.post('events.json', {resource: resource, action: action, id: id})
+  def self.write(payload)
+    res = Viki::Queue::Http.post('events.json', payload)
     return true if res.code == '201'
     raise res.body
+  end
+
+  def self.to_hash(event)
+    {action: event[0], resource: event[1], id: event[2]}
   end
 end

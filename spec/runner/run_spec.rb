@@ -27,4 +27,3 @@ describe Viki::Queue::Runner do
     end
   end
 end
-
