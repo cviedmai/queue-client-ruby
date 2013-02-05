@@ -15,20 +15,20 @@ module Viki
     def self.register(queue, resources)
       res = self.http_post('queues.json', {name: queue, resources: resources})
       return true if res.code == '201'
-      raise res.body
+      raise res.code + res.body
     end
 
     def self.poll(queue)
       res = self.http_get("queues/#{queue}/events/head.json")
       return nil if res.code == '404'
       return JSON.parse(res.body) if res.code == '200'
-      raise res.body
+      raise res.code + res.body
     end
 
     def self.close(queue)
       res = self.http_delete("queues/#{queue}/events/head.json")
       return true if res.code == '200'
-      raise res.body
+      raise res.code + res.body
     end
 
     def self.create(resource, id)
@@ -68,5 +68,6 @@ module Viki
   end
 end
 
+require_relative 'queue_client/runner'
 require_relative 'queue_client/version'
 require_relative 'queue_client/configuration'

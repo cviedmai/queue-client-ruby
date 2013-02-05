@@ -19,7 +19,6 @@ describe Viki::Queue do
       Viki::Queue.delete(:application, '23a')
     end
 
-
     private
     def assert(resource, id, action)
       http = mock(http)
