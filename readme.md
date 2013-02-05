@@ -20,7 +20,7 @@ Before being able to consume from a queue, you must first create it:
 This creates a queue named *gaia_applications* which will monitor the *application* and *user* resources. An error is raised on failure
 
 ## Consumption
-Queues can be consumed in one of two ways. The first is more manual and relies on the `poll` and `close` method:
+Queues can be consumed in one of two ways. The first is more manual and relies on the `poll` and `close` methods:
 
     event = Viki::Queue.poll(QUEUE_NAME)
     unless event.nil?
@@ -43,7 +43,7 @@ The other approach involves a using the built-in runner and providing a routing 
     end
     Viki::Queue::Runner.run(QUEUE_NAME, GaiaRouter)
 
-The method names look like `FORMAT_RESOURCE`, where `FORMAT` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed.
+The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed.
 
 `run` takes a 3rd optional argument to configure the runner, possible values are:
 
