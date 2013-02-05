@@ -28,6 +28,8 @@ Queues can be consumed in one of two ways. The first is more manual and relies o
       Viki::Queue.close(QUEUE_NAME)
     end
 
+**Note that `poll` blocks for 10 seconds and returns nil if no events are queued on timeout**
+
 The other approach involves a using the built-in runner and providing a routing class:
 
     Class GaiaRouter
