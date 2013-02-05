@@ -1,3 +1,4 @@
+#Queue
 ## Configuration
     Viki::Queue.configure |c|
       c.host = 'queue.dev.viki.io'
@@ -5,31 +6,41 @@
     end
 It defaults to production queues!
 
-## Writing
-Use the `create`, `update` and `delete` methods. An exception will be raised on failure
-
-    Viki::Queue.create(:application, '38a')
-    Viki::Queue.update(:user, '9003u')
-    Viki::Queue.delete(:container, '50c')
-
 ## Queue creation
 Before being able to consume from a queue, you must first create it:
 
-    Viki::Queue.register('gaia_applications', ['application', 'user'])
+    Viki::Queue.create('gaia_applications', ['application', 'user'])
 
 This creates a queue named *gaia_applications* which will monitor the *application* and *user* resources. An error is raised on failure
 
-## Consumption
-Queues can be consumed in one of two ways. The first is more manual and relies on the `poll` and `close` methods:
+## Queue deletion
+You can delete a queue an all the events that are queued:
 
-    event = Viki::Queue.poll(QUEUE_NAME)
+    Viki::Queue.delete('gaia_applications')
+
+#Events
+## Writing
+Use the `create`, `update` and `delete` methods. An exception will be raised on failure
+
+    Viki::Queue::Event.create(:application, '38a')
+    Viki::Queue::Event.update(:user, '9003u')
+    Viki::Queue::Event.delete(:container, '50c')
+
+## Consumption
+Queues' events can be consumed in one of two ways.
+
+### Poll-close
+The first is more manual and relies on the `poll` and `close` methods:
+
+    event = Viki::Queue::Event.poll(QUEUE_NAME)
     unless event.nil?
       # do something
-      Viki::Queue.close(QUEUE_NAME)
+      Viki::Queue::Event.close(QUEUE_NAME)
     end
 
 **Note that `poll` blocks for 10 seconds and returns nil if no events are queued on timeout**
 
+### Runner
 The other approach involves a using the built-in runner and providing a routing class:
 
     Class GaiaRouter

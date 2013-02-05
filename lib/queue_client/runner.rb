@@ -16,11 +16,11 @@ class Viki::Queue::Runner
 
   private
   def self.process(queue, router)
-    event = Viki::Queue.poll(queue)
+    event = Viki::Queue::Event.poll(queue)
     unless event.nil?
       method = "#{event['action']}_#{event['resource']}"
       if router.send(method.to_sym, event) == true
-        Viki::Queue.close(queue)
+        Viki::Queue::Event.close(queue)
       end
     end
   end
