@@ -1,19 +1,17 @@
 require 'spec_helper'
-require 'net/http'
 
 describe Viki::Queue do
-  describe "Register" do
-    it "registers the queue" do
+  describe "Delete" do
+    it "deletes the queue" do
       http = mock(http)
       res = mock(http)
       Net::HTTP.any_instance.stub(:start).and_yield http
       http.should_receive(:request) do |request|
-        request.method.should == "POST"
-        request.path.should == '/v1/queues.json'
-        JSON.parse(request.body).should == {"name"=>"dummy", "resources"=>["application"]}
-        FakeResponse.new('201', '{"ok":true}')
+        request.method.should == "DELETE"
+        request.path.should == '/v1/queues/gaia.json'
+        FakeResponse.new('200', '{"ok":true}')
       end
-      Viki::Queue.register('dummy', ['application'])
+      Viki::Queue.delete('gaia')
     end
 
     it "raise an exception on failure" do
@@ -21,7 +19,7 @@ describe Viki::Queue do
       res = mock(http)
       Net::HTTP.any_instance.stub(:start).and_yield http
       http.should_receive(:request).and_return FakeResponse.new('400', '{"ok":false}')
-      expect { Viki::Queue.register('dummy', ['application']) }.to raise_error
+      expect { Viki::Queue.delete('gaia') }.to raise_error
     end
   end
 end

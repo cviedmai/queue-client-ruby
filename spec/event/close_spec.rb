@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'net/http'
 
-describe Viki::Queue do
+describe Viki::Queue::Event do
   describe "Close" do
     it "Closes the queue's head" do
       http = mock(http)
@@ -12,7 +11,7 @@ describe Viki::Queue do
         request.path.should == '/v1/queues/dummy/events/head.json'
         FakeResponse.new('200', '{"ok":true}')
       end
-      Viki::Queue.close('dummy')
+      Viki::Queue::Event.close('dummy')
     end
   end
 end

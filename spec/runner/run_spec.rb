@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 describe Viki::Queue::Runner do
   describe "run" do
     it "polls the queue and noops a nil" do

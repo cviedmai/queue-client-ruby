@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'net/http'
 
-describe Viki::Queue do
+describe Viki::Queue::Event do
   describe "Poll" do
     it "polls the queue and returns nil" do
       http = mock(http)
@@ -12,7 +11,7 @@ describe Viki::Queue do
         request.path.should == '/v1/queues/dummy/events/head.json'
         FakeResponse.new('404', '{"ok":true}')
       end
-      Viki::Queue.poll('dummy')
+      Viki::Queue::Event.poll('dummy')
     end
 
     it "polls the queue and returns the object" do
@@ -24,7 +23,7 @@ describe Viki::Queue do
         request.path.should == '/v1/queues/dummy/events/head.json'
         FakeResponse.new('200', '{"id":43}')
       end
-      Viki::Queue.poll('dummy')
+      Viki::Queue::Event.poll('dummy')
     end
   end
 end

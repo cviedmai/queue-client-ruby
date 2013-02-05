@@ -1,22 +1,20 @@
 require 'spec_helper'
-require 'net/http'
 
-describe Viki::Queue do
+describe Viki::Queue::Event do
   describe "write" do
-
     it "writes a create event" do
       assert('kitten', '22k', 'create')
-      Viki::Queue.create(:kitten, '22k')
+      Viki::Queue::Event.create(:kitten, '22k')
     end
 
     it "writes a update event" do
       assert('user', '9u', 'update')
-      Viki::Queue.update(:user, '9u')
+      Viki::Queue::Event.update(:user, '9u')
     end
 
     it "writes a delete event" do
       assert('application', '23a', 'delete')
-      Viki::Queue.delete(:application, '23a')
+      Viki::Queue::Event.delete(:application, '23a')
     end
 
     private
