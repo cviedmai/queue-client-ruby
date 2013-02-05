@@ -1,14 +1,7 @@
 class Viki::Queue::Configuration
-  ENVIRONMENTS = {
-    production: {host: 'queue.viki.io'},
-    development: {host: 'queue.dev.viki.io'}
-  }
-  attr_accessor :host
-
-  def self.load(c = {})
-    c[:host] = :production unless c.include?(:host)
-    config = Viki::Queue::Configuration.new()
-    config.host = c[:host].is_a?(Symbol) ? ENVIRONMENTS[c[:host]][:host] : c[:host]
-    config
+  attr_accessor :host, :port
+  def initialize
+    @host = 'queue.viki.io'
+    @port = 80
   end
 end
