@@ -7,7 +7,7 @@ module Viki
     include Message
 
     def initialize(host='localhost', port=5672)
-      @connection = Bunny.new({'host' => host, 'port' => port})
+      @connection = Bunny.new({host: host, port: port})
       @connection.start
       @channel = @connection.create_channel
       @exchange = @channel.topic("general", durable: true)
