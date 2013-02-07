@@ -3,26 +3,31 @@ require 'spec_helper'
 describe Viki::Queue::Runner do
   describe "run" do
     it "polls the queue and noops a nil" do
-      Viki::Queue::Event.should_receive(:poll).with('the-queue').and_return(nil)
-      Viki::Queue::Runner.run('the-queue', nil)
-    end
-
-    it "polls the queue and passes the event to the router" do
-      e = {'resource' => 'application', 'action' => 'create'}
-      Viki::Queue::Event.should_receive(:poll).with('the-queue').and_return(e)
-      Viki::Queue::Event.should_receive(:close).with('the-queue')
-      Viki::Queue::Runner.run('the-queue', FakeRouter)
+      q = Viki::Queue.new()
+      q.subscribe('a_queue', ['application'])
+      q.create_message(:application, '22a')
+      Viki::Queue::Runner.run('a_queue', FakeRouter)
+      q.delete('a_queue')
     end
 
     it "iterates multiple times" do
-      Viki::Queue::Event.should_receive(:poll).with('the-queue').twice().and_return(nil)
-      Viki::Queue::Runner.run('the-queue', FakeRouter, {iterations: 2})
+      q = Viki::Queue.new()
+      q.subscribe('the-queue', ['application', 'video'])
+      q.create_message(:application, '22a')
+      q.update_message(:video, '1v')
+      Viki::Queue::Runner.run('the-queue', FakeRouter, {iterations: 2, host: 'localhost', port: 5672})
+      q.delete('the-queue')
     end
   end
 
   class FakeRouter
     def self.create_application(e)
-      e.should == {'resource' => 'application', 'action' => 'create'}
+      {'resource' => 'application', 'action' => 'create', 'id' => '22a'}.should == e
+      true
+    end
+
+    def self.update_video(e)
+      {'resource' => 'video', 'action' => 'update', 'id' => '1v'}.should == e
       true
     end
   end

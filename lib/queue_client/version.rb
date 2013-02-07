@@ -1,5 +1,5 @@
 module Viki
-  module Queue
-    VERSION = "0.0.3"
+  class Queue
+    VERSION = "0.0.4"
   end
 end

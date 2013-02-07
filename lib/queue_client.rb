@@ -1,33 +1,38 @@
-require 'json'
-require 'net/http'
+require "bunny"
+require_relative 'queue_client/message'
+require_relative 'queue_client/version'
 
 module Viki
-  module Queue
+  class Queue
+    include Message
 
-    def self.configure
-      yield(configuration)
+    def initialize(host='localhost', port=5672)
+      @connection = Bunny.new({'host' => host, 'port' => port})
+      @connection.start
+      @channel = @connection.create_channel
+      @exchange = @channel.topic("general")
     end
 
-    def self.configuration
-      @configuration ||= Configuration.new
+    def stop
+      @connection.stop
     end
 
-    def self.create(queue, resources)
-      res = Viki::Queue::Http.post('queues.json', {name: queue, resources: resources})
-      return true if res.code == '201'
-      raise res.code + res.body
+    def subscribe(queue, resources)
+      resources.each do |r|
+        @channel.queue(queue, durable: true).bind(@exchange, :routing_key => "resources.#{r}.#")
+      end
     end
 
-    def self.delete(queue)
-      res = Viki::Queue::Http.delete("queues/#{queue}.json")
-      return true if res.code == '200'
-      raise res.code + res.body
+    def unsubscribe(queue, resources)
+      resources.each do |r|
+        @channel.queue(queue, durable: true).unbind(@exchange, :routing_key => "resources.#{r}.#")
+      end
+    end
+
+    def delete(queue)
+      @channel.queue(queue, durable: true).delete()
     end
   end
 end
 
-require_relative 'queue_client/http'
-require_relative 'queue_client/event'
 require_relative 'queue_client/runner'
-require_relative 'queue_client/version'
-require_relative 'queue_client/configuration'
