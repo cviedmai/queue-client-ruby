@@ -10,7 +10,7 @@ module Viki
       @connection = Bunny.new({'host' => host, 'port' => port})
       @connection.start
       @channel = @connection.create_channel
-      @exchange = @channel.topic("general")
+      @exchange = @channel.topic("general", durable: true)
     end
 
     def stop
