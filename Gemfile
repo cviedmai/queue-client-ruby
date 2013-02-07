@@ -4,3 +4,7 @@ gem 'oj'
 gem 'amqp'
 gem 'eventmachine'
 gem 'bunny', ">= 0.9.0.pre6"
+
+group :development  do
+  gem 'rspec'
+end
