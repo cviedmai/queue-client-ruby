@@ -4,52 +4,50 @@
 It defaults to localhost queues.
 
 ## Subscribe
-Before being able to consume from a queue, you must first subscribe to some resources it:
+Before being able to consume from a queue, you must first subscribe to some resources:
 
     q = Viki::Queue.new('queue.dev.viki.io', 80)
     q.subscribe('gaia-applications', ['application', 'user'])
 
-This creates a durable queue named *gaia_applications* which will monitor the *application* and *user* resources.
+This creates a queue named *gaia_applications* which will monitor the *application* and *user* resources.
 
 ## Unsubscribe
 You can unsubscribe from some resources:
 
-    q = Viki::Queue.new('queue.dev.viki.io', 80)
-    q.subscribe('gaia-applications', ['application', 'user'])
     q.unsubscribe('gaia-applications', ['application'])
 
-This leaves a durable queue named *gaia_applications* which will monitor only the *application* resource.
+This leaves a queue named *gaia_applications* which only monitors the *application* resource.
 
 ## Deletion
-You can delete a queue an all the events that are queued:
+You can delete a queue and all of its queued events:
 
     q = Viki::Queue.new('queue.dev.viki.io', 80)
     q.delete('gaia_applications')
 
 #Messages
 ## Writing
-Use the `create_message`, `update_message` and `delete_message` methods.
+Use the `create_message`, `update_message` and `delete_message` methods:
 
     q = Viki::Queue.new('queue.dev.viki.io', 80)
     q.create_message(:application, '38a')
     q.update_message(:user, '9003u')
     q.delete_message(:container, '50c')
 
-It is possible to pass an optional payload parameter to any of these parameters.
+An optional payload parameter can be supplied:
 
     q.create_message(:application, '38a', {name: 'gaia'})
 
 ### Bulk write
-It is possible to do a bulk write of multiple events.
+Multiple events can be sent at once:
 
     q = Viki::Queue.new('queue.dev.viki.io', 80)
     q.bulk([:create, :video, '1v'], [:update, :user, '1u', 'optional_payload'], [:delete, :container, '1c'])
 
-The events will be writen in the order that they appear on the parameters. Note that the second message containers an optional payload.
+The events will be queued in-order.
 
 ## Consumption
 
-Consumption involves a using the built-in runner and providing a routing class:
+Consumption involves using the built-in runner and providing a routing class:
 
     Class GaiaRouter
       def self.delete_application(event)
