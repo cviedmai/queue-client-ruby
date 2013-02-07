@@ -1,6 +1,7 @@
 #Queue
 ## Initialize
     Viki::Queue.new('queue.dev.viki.io', 80)
+
 It defaults to localhost queues.
 
 ## Subscribe
