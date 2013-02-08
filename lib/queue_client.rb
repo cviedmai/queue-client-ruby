@@ -32,7 +32,7 @@ module Viki
 
     def route(route)
       return if route.nil? or route == ""
-      route += '.' unless route[-1] == '.'
+      route = route[0...-1] if route[-1] == '.'
       @routing = route
     end
 

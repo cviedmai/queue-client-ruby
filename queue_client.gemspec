@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Viki"]
   gem.email         = ["engineering@viki.com"]
   gem.description   = %q{A client for Viki's queue}
-  gem.homepage      = "http://dev.viki.com"
+  gem.homepage      = "https://github.com/viki-org/queue-client"
   gem.summary       = %q{A client for Viki's queue}
 
   gem.files         = `git ls-files`.split($\)

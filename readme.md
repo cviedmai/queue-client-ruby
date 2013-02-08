@@ -1,3 +1,6 @@
+#Installation
+    gem install queue_client
+
 #Queue
 ## Initialize
     Viki::Queue.new('queue.dev.viki.io', 80)
