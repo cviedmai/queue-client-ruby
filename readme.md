@@ -61,10 +61,13 @@ Consumption involves using the built-in runner and providing a routing class:
     end
     Viki::Queue::Runner.run(QUEUE_NAME, GaiaRouter)
 
-The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed.
+The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed. Note: A message is only acknowledged to the queue when the processing method returns true.
+
+If an exception is raised while processing the message, the runner will call the error method of the router with the exception. Afterwards, the runner will wait before trying to reprocess the same message again.
 
 `run` takes a 3rd optional argument to configure the runner, possible values are:
 
-* host: the hostname of the queue server
-* port: the port of the queue server
-* iterations: the number of iterations to run, 0 means loop forever (DEFAULT 1)
+* `host`: The hostname of the queue server (DEFAULT localhost).
+* `port`: The port of the queue server (DEFAULT 5672).
+* `iterations`: The number of iterations to run, i.e. of messages to process. 0 means loop forever (DEFAULT 1).
+* `fail_pause`: Seconds to pause until trying to reprocess a failed message (DEFAULT 10)

@@ -2,32 +2,40 @@ require 'amqp'
 require 'json'
 
 class Viki::Queue::Runner
-  def self.run(queue, router, config = {iterations: 1, host: 'localhost', port: 5672})
+  def self.run(queue, router, config={})
+    config = {iterations: 1, host: 'localhost', port: 5672, fail_pause: 10}.merge(config)
+
     EventMachine.run do
       connection = AMQP.connect(host: config[:host], port: config[:port])
       channel = AMQP::Channel.new(connection)
       loops = 0
-      begin
-        channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
-          process(router, JSON.parse(message), metadata)
-          loops += 1
-          if loops == config[:iterations]
-            connection.close { EventMachine.stop }
+      channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
+        while true
+          begin
+            if process(router, JSON.parse(message))
+              metadata.ack
+              break
+            end
+          rescue => e
+            router.error(e)
           end
+          sleep(config[:fail_pause])
         end
-      rescue => e
-        router.send(:error, e)
+
+        loops += 1
+        if loops == config[:iterations]
+          connection.close { EventMachine.stop }
+        end
       end
     end
   end
 
   private
-  def self.process(router, message, metadata)
+
+  def self.process(router, message)
     unless message.nil?
       method = "#{message['action']}_#{message['resource']}"
-      if router.send(method.to_sym, message) == true
-        metadata.ack
-      end
+      router.send(method, message)
     end
   end
 end
