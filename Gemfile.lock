@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    queue_client (0.0.5)
+    queue_client (0.0.9)
       amqp (= 0.9.8)
       bunny (= 0.9.0.pre6)
       eventmachine (= 1.0.0)
