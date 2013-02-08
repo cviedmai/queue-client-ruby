@@ -80,7 +80,7 @@ Consumption involves using the built-in runner and providing a routing class:
     end
     queue_service.run(QUEUE_NAME, GaiaRouter)
 
-The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed. *Note* that a message is only acknowledged to the queue when the processing method returns true.
+The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` can be any resource. *Note* that if noone is registered for listening the kind of resource you are sending, the message will just be dropped.There's no need to `close` the queue, simply return true when the event has been successfully processed. *Note* that a message is only acknowledged to the queue when the processing method returns true.
 
 If an exception is raised while processing the message, the runner will call the error method of the router with the exception. Afterwards, the runner will wait before trying to reprocess the same message again.
 
