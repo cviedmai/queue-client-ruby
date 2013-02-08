@@ -17,13 +17,13 @@ module Viki::Queue
 
     def subscribe(queue, resources)
       resources.each do |r|
-        @channel.queue(queue, durable: true).bind(@exchange, :routing_key => "resources.#{r}.#")
+        @channel.queue(queue, durable: true).bind(@exchange, :routing_key => "#{@routing}.#{r}.#")
       end
     end
 
     def unsubscribe(queue, resources)
       resources.each do |r|
-        @channel.queue(queue, durable: true).unbind(@exchange, :routing_key => "resources.#{r}.#")
+        @channel.queue(queue, durable: true).unbind(@exchange, :routing_key => "#{@routing}.#{r}.#")
       end
     end
 

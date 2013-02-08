@@ -19,14 +19,14 @@ Before being able to consume from a queue, you must first subscribe to some reso
 
     queue_service.subscribe('gaia-applications', ['application', 'user'])
 
-This creates a queue named *gaia_applications* which will monitor the *application* and *user* resources.
+This creates a queue named *gaia_applications* which will monitor the *application* and *user* resources, i.e. it will subscribe to `resources.application.#` and `resources.user.#`. It is possible to change the root of the route path by using the `.route(new_route)` command as described below (see *routing*).
 
 ## Unsubscribe
 You can unsubscribe from some resources:
 
     queue_service.unsubscribe('gaia-applications', ['application'])
 
-This leaves a queue named *gaia_applications* which only monitors the *application* resource.
+This leaves a queue named *gaia_applications* which only monitors the *application* resource, i.e. it will subscribe to `resources.application.#`. It is possible to change the root of the route path by using the `.route(new_route)` command as described below (see *routing*).
 
 ## Deletion
 You can delete a queue and all of its queued events:
@@ -34,17 +34,21 @@ You can delete a queue and all of its queued events:
     queue_service.delete('gaia_applications')
 
 ## Routing
-By default, all the messages will be routed under the `resources.#` route, e.g. `resources.videos.create`. It is possible to modify this route:
-
-    queue_service.route('services.gaia')
-    queue_service.create_message(:application, '12a')
-
-This will create a new message under the route `services.gaia.application.create`.
+By default, all the messages will be routed under `resources.RESOURCE_NAME.ACTION`, e.g. `resources.videos.create`.It is possible to modify the root of the route.
 
     queue_service.route('delayed_jobs.subbing')
     queue_service.create_message(:compile, '3v')
 
-This other example will create a message under the route `delayed_jobs.subbing.compile.create`. *Note* that the part `resource.action` is always there, changing the routing only affects the root of the path.
+This commands will create a message under the route `delayed_jobs.subbing.compile.create`.
+
+On the other hand, by default subscriptions are routed via `resources.RESOURCE_NAME.#`, e.g. `resources.videos.#`.
+
+    queue_service.route('services.gaia')
+    queue_service.subscribe('gaia-consumer', [users, apps])
+
+This will create a new queue called `gaia-consumer` that is subscribed to `services.gaia.apps.#`.
+
+*Note* that the part `.resource.action` is always present in both examples, changing the route only affects the root of it.
 
 #Messages
 ## Writing
