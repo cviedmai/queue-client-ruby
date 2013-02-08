@@ -51,6 +51,14 @@ This will create a new queue called `gaia-consumer` that is subscribed to `servi
 *Note* that the part `.resource.action` is always present in both examples, changing the route only affects the root of it.
 
 #Messages
+
+  Messages have always the following structure:
+
+    action: mandatory, it will always be 'create', 'update' or 'delete'
+    resource: mandatory
+    id: mandatory
+    payload: optional attribute.
+
 ## Writing
 Use the `create_message`, `update_message` and `delete_message` methods:
 
@@ -61,6 +69,10 @@ Use the `create_message`, `update_message` and `delete_message` methods:
 An optional payload parameter can be supplied:
 
     queue_service.create_message(:application, '38a', {name: 'gaia'})
+
+This will create a message in the queue that looks like:
+
+    {action: 'create', resource: 'application', id: '38a', payload: {name: 'gaia'} }
 
 ### Bulk write
 Multiple events can be sent at once:
