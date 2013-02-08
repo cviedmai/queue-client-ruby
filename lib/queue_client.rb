@@ -11,6 +11,7 @@ module Viki
       @connection.start
       @channel = @connection.create_channel
       @exchange = @channel.topic("general", durable: true)
+      @routing = 'resources'
     end
 
     def stop
@@ -27,6 +28,12 @@ module Viki
       resources.each do |r|
         @channel.queue(queue, durable: true).unbind(@exchange, :routing_key => "resources.#{r}.#")
       end
+    end
+
+    def route(route)
+      return if route.nil? or route == ""
+      route += '.' unless route[-1] == '.'
+      @routing = route
     end
 
     def delete(queue)

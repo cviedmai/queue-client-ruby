@@ -21,7 +21,7 @@ module Message
   private
 
   def write(payload)
-    routing_key = "resources.#{payload[:resource]}.#{payload[:action]}"
+    routing_key = "#{@routing}.#{payload[:resource]}.#{payload[:action]}"
     @exchange.publish(Oj.dump(payload), routing_key: routing_key, timestamp: Time.now.to_i, persistent: true)
   end
 

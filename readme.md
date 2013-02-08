@@ -25,6 +25,20 @@ You can delete a queue and all of its queued events:
     q = Viki::Queue.new('queue.dev.viki.io', 80)
     q.delete('gaia_applications')
 
+## Routing
+By default, all the messages will be routed under the `resources.#` route, e.g. `resources.videos.create`. It is possible to modify this route:
+
+    q = Viki::Queue.new('queue.dev.viki.io', 80)
+    q.route('services.gaia')
+    q.create_message(:application, '12a')
+
+This will create a new message under the route `services.gaia.application.create`.
+
+    q.route('delayed_jobs.subbing')
+    q.create_message(:compile, '3v')
+
+This other example will create a message under the route `delayed_jobs.subbing.compile.create`. *Note* that the part `resource.action` is always there, changing the routing only affects the root of the path.
+
 #Messages
 ## Writing
 Use the `create_message`, `update_message` and `delete_message` methods:
@@ -61,7 +75,7 @@ Consumption involves using the built-in runner and providing a routing class:
     end
     Viki::Queue::Runner.run(QUEUE_NAME, GaiaRouter)
 
-The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed. Note: A message is only acknowledged to the queue when the processing method returns true.
+The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` should be the same as what the queue was regitered for. There's no need to `close` the queue, simply return true when the event has been successfully processed. *Note* that a message is only acknowledged to the queue when the processing method returns true.
 
 If an exception is raised while processing the message, the runner will call the error method of the router with the exception. Afterwards, the runner will wait before trying to reprocess the same message again.
 
