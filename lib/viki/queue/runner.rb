@@ -1,5 +1,4 @@
 require 'amqp'
-require 'json'
 
 module Viki::Queue
   module Runner
@@ -13,7 +12,7 @@ module Viki::Queue
         channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
           while true
             begin
-              if process(router, JSON.parse(message))
+            if process(router, Oj.load(message)) == true
                 metadata.ack
                 break
               end
