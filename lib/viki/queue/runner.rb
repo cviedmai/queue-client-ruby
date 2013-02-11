@@ -12,7 +12,7 @@ module Viki::Queue
         channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
           while true
             begin
-              if process(router, Oj.load(message)) == true
+              if process(router, Viki::Queue::Compress.gunzip(message)) == true
                 metadata.ack
                 break
               end
@@ -34,7 +34,7 @@ module Viki::Queue
 
     def process(router, message)
       unless message.nil?
-        method = "#{message['action']}_#{message['resource']}"
+        method = "#{message[:action]}_#{message[:resource]}"
         router.send(method, message)
       end
     end

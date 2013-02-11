@@ -22,12 +22,12 @@ describe Viki::Queue::Runner do
 
   class FakeRouter
     def self.create_application(e)
-      {'resource' => 'application', 'action' => 'create', 'id' => '22a'}.should == e
+      {resource: 'application', action: 'create', id: '22a'}.should == e
       true
     end
 
     def self.update_video(e)
-      {'resource' => 'video', 'action' => 'update', 'id' => '1v'}.should == e
+      {resource: 'video', action: 'update', id: '1v'}.should == e
       true
     end
 
