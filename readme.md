@@ -24,7 +24,7 @@ This creates a queue named *gaia_applications* which will monitor the *applicati
 ## Unsubscribe
 You can unsubscribe from some resources:
 
-    queue_service.unsubscribe('gaia-applications', ['application'])
+    queue_service.unsubscribe('gaia-applications', ['user'])
 
 This leaves a queue named *gaia_applications* which only monitors the *application* resource, i.e. it will subscribe to `resources.application.#`. It is possible to change the root of the route path by using the `.route(new_route)` command as described below (see *routing*).
 
@@ -44,7 +44,7 @@ This commands will create a message under the route `delayed_jobs.subbing.compil
 On the other hand, by default subscriptions are routed via `resources.RESOURCE_NAME.#`, e.g. `resources.videos.#`.
 
     queue_service.route('services.gaia')
-    queue_service.subscribe('gaia-consumer', [users, apps])
+    queue_service.subscribe('gaia-consumer', [apps])
 
 This will create a new queue called `gaia-consumer` that is subscribed to `services.gaia.apps.#`.
 
@@ -96,7 +96,7 @@ Consumption involves using the built-in runner and providing a routing class:
     end
     queue_service.run(QUEUE_NAME, GaiaRouter)
 
-The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` can be any resource. *Note* that if noone is registered for listening the kind of resource you are sending, the message will just be dropped.There's no need to `close` the queue, simply return true when the event has been successfully processed. *Note* that a message is only acknowledged to the queue when the processing method returns true.
+The method names look like `ACTION_RESOURCE`, where `ACTION` can be `create`, `update` or `delete`. The `RESOURCE` can be any resource. *Note* that if noone is registered for listening the kind of resource you are sending, the message will just be dropped. There's no need to `close` the queue, simply return true when the event has been successfully processed. *Note* that a message is only acknowledged to the queue when the processing method returns true.
 
 If an exception is raised while processing the message, the runner will call the error method of the router with the exception. Afterwards, the runner will wait before trying to reprocess the same message again.
 
