@@ -1,6 +1,3 @@
-#Installation
-    gem install queue_client
-
 #Queue
 
 ## Configuration
