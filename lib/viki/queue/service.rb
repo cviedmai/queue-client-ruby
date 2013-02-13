@@ -4,7 +4,7 @@ module Viki::Queue
     include Viki::Queue::Runner
 
     def initialize
-      @connection = Bunny.new({host: Viki::Queue.host, port: Viki::Queue.port})
+      @connection = Bunny.new({host: Viki::Queue.host, port: Viki::Queue.port, keepalive: true})
       @connection.start
       @channel = @connection.create_channel
       @exchange = @channel.topic("general", durable: true)
