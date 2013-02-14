@@ -22,7 +22,6 @@ module Viki
   end
 end
 
-require_relative 'viki/queue/compress'
 require_relative 'viki/queue/message'
 require_relative 'viki/queue/runner'
 require_relative 'viki/queue/service'

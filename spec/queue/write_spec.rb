@@ -47,7 +47,7 @@ describe Viki::Queue do
         end
         count = 0
         q.subscribe do |m|
-          m = Viki::Queue::Compress.gunzip(m)
+          m = Oj.load(m)
           if message.class == Array
             message.include?(m).should == true
           else
