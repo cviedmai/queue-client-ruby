@@ -47,7 +47,7 @@ describe Viki::Queue do
         end
         count = 0
         q.subscribe do |m|
-          m = Oj.load(m, {mode: :compat, symbol_keys: true})
+          m = Oj.load(m, symbol_keys: true)
           if message.class == Array
             message.include?(m).should == true
           else

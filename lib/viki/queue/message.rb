@@ -20,7 +20,7 @@ module Viki::Queue
 
     def write(payload)
       routing_key = "#{@routing}.#{payload[:resource]}.#{payload[:action]}"
-      @exchange.publish(Oj.dump(payload), routing_key: routing_key, timestamp: Time.now.to_i, persistent: true)
+      @exchange.publish(Oj.dump(payload, mode: :compat), routing_key: routing_key, timestamp: Time.now.to_i, persistent: true)
     end
 
     def write_many(payload)

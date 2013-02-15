@@ -12,7 +12,7 @@ module Viki::Queue
         channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
           while true
             begin
-              if process(router, Oj.load(message, {mode: :compat, symbol_keys: true})) == true
+              if process(router, Oj.load(message, symbol_keys: true)) == true
                 metadata.ack
                 break
               end
