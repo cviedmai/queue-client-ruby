@@ -6,7 +6,11 @@ module Viki::Queue
       config = {iterations: 1, fail_pause: 10}.merge(config)
 
       EventMachine.run do
-        connection = AMQP.connect(host: Viki::Queue.host, port: Viki::Queue.port)
+        connection = AMQP.connect({
+          host: Viki::Queue.host,
+          port: Viki::Queue.port,
+          username: Viki::Queue.username,
+          password: Viki::Queue.password})
         channel = AMQP::Channel.new(connection)
         loops = 0
         channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
