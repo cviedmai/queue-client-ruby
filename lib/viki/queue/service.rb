@@ -3,7 +3,9 @@ module Viki::Queue
     include Viki::Queue::Message
     include Viki::Queue::Runner
 
-    def initialize
+    attr_accessor :routing, :exchange
+
+    def initialize(opts={})
       @connection = Bunny.new({
         host: Viki::Queue.host,
         port: Viki::Queue.port,
@@ -16,7 +18,7 @@ module Viki::Queue
       @connection.start
       @channel = @connection.create_channel
       @exchange = @channel.topic("general", durable: true)
-      @routing = 'resources'
+      @routing = opts.fetch(:routing, 'resources')
     end
 
     def stop

@@ -21,9 +21,14 @@ module Viki
       Viki::Queue._service ||= Service.new
     end
 
+    def self.reconnect
+      Viki::Queue._service.stop
+      Viki::Queue._service = Service.new({routing: Viki::Queue._service.routing})
+    end
   end
 end
 
+require_relative 'viki/queue/logger'
 require_relative 'viki/queue/message'
 require_relative 'viki/queue/runner'
 require_relative 'viki/queue/service'
