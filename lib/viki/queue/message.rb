@@ -30,13 +30,11 @@ module Viki::Queue
         rescue Exception => e
           attemps -= 1
           if attemps > 0
-            Viki::Queue::Logger.log('Failed to write in queue. Trying to reconnect...')
             sleep(0.5)
             Viki::Queue.reconnect()
           else
             Viki::Queue::Logger.log('Failed to write in queue. Exiting.', e)
           end
-
         end
       end
     end
