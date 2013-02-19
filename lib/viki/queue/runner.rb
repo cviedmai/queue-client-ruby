@@ -13,7 +13,7 @@ module Viki::Queue
           password: Viki::Queue.password})
         channel = AMQP::Channel.new(connection)
         loops = 0
-        channel.queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
+        channel.prefetch(1).queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
           while true
             begin
               if process(router, Oj.load(message, symbol_keys: true)) == true
