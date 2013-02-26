@@ -4,6 +4,8 @@
     Viki::Queue.configure do |config|
       config.host = "queue.dev.viki.io"
       config.port = "5672"
+      config.username = "username"
+      config.password = "password"
     end
 
 It defaults to localhost queues.
