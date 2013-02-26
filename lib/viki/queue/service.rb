@@ -23,6 +23,7 @@ module Viki::Queue
 
     def stop
       @connection.stop
+    rescue
     end
 
     def subscribe(queue, resources)
