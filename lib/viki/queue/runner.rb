@@ -14,9 +14,11 @@ module Viki::Queue
         channel = AMQP::Channel.new(connection)
         loops = 0
         channel.prefetch(1).queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
-          while true
+          processed = false
+          for i in 1..10 do
             begin
               if process(router, Oj.load(message, symbol_keys: true)) == true
+                processed = true
                 metadata.ack
                 break
               end
@@ -24,6 +26,11 @@ module Viki::Queue
               router.error(e)
             end
             sleep(config[:fail_pause])
+          end
+
+          unless processed
+            router.error("Failed to process message: #{message}"
+            connection.close { EventMachine.stop }
           end
 
           loops += 1
