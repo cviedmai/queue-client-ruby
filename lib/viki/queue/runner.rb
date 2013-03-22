@@ -29,7 +29,7 @@ module Viki::Queue
           end
 
           unless processed
-            router.error("Failed to process message: #{message}"
+            router.error("Failed to process message: #{message}")
             connection.close { EventMachine.stop }
           end
 
