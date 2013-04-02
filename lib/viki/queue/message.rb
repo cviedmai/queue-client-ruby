@@ -41,7 +41,11 @@ module Viki::Queue
     end
 
     def send_to_queue(message, opts)
-      Viki::Queue._service.exchange.publish(message, opts)
+      if Viki::Queue.service.coalescing?
+        Viki::Queue.service.buffer << [message, opts]
+      else
+        Viki::Queue._service.exchange.publish(message, opts)
+      end
     end
 
     def write_many(payload)

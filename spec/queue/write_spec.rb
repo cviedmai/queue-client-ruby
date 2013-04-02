@@ -87,4 +87,41 @@ describe Viki::Queue do
     end
 
   end
+
+  describe "coalesce" do
+    it "dedups duplicate messages" do
+      Viki::Queue.service.exchange.should_receive(:publish).once
+      Viki::Queue.service.coalesce do
+        Viki::Queue.service.update_message(:kitten, '22k')
+        Viki::Queue.service.update_message(:kitten, '22k')
+        Viki::Queue.service.update_message(:kitten, '22k')
+      end
+    end
+
+    it "removes messages that create then delete" do
+      Viki::Queue.service.exchange.should_receive(:publish).never
+      Viki::Queue.service.coalesce do
+        Viki::Queue.service.create_message(:kitten, '22k')
+        Viki::Queue.service.delete_message(:kitten, '22k')
+      end
+    end
+
+    it "doesn't removes messages that delete then create" do
+      Viki::Queue.service.exchange.should_receive(:publish).twice
+      Viki::Queue.service.coalesce do
+        Viki::Queue.service.delete_message(:kitten, '22k')
+        Viki::Queue.service.create_message(:kitten, '22k')
+      end
+    end
+
+    it "removes everything between create then delete" do
+      Viki::Queue.service.exchange.should_receive(:publish).never
+      Viki::Queue.service.coalesce do
+        Viki::Queue.service.create_message(:kitten, '22k')
+        Viki::Queue.service.update_message(:kitten, '22k')
+        Viki::Queue.service.update_message(:kitten, '22k')
+        Viki::Queue.service.delete_message(:kitten, '22k')
+      end
+    end
+  end
 end
