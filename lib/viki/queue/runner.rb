@@ -17,7 +17,9 @@ module Viki::Queue
           processed = false
           for i in 1..10 do
             begin
-              if process(router, Oj.load(message, symbol_keys: true)) == true
+              payload = Oj.load(message, symbol_keys: true)
+              payload[:_meta] = {timestamp: metadata.timestamp}
+              if process(router, payload) == true
                 processed = true
                 metadata.ack
                 break
