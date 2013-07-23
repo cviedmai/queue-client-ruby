@@ -2,6 +2,7 @@
 
 ## Configuration
     Viki::Queue.configure do |config|
+      config.client_name = "my_app"
       config.host = "queue.dev.viki.io"
       config.port = "5672"
       config.username = "username"
