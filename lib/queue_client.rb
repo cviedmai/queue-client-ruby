@@ -8,7 +8,7 @@ module Viki
     @username = 'guest'
     @password = 'guest'
     class << self
-      attr_accessor :host, :port, :username, :password, :_service
+      attr_accessor :host, :port, :username, :password, :client_name, :_service
     end
 
     def self.configure(&block)

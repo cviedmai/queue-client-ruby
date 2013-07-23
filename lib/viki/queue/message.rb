@@ -49,6 +49,7 @@ module Viki::Queue
 
     def prepare_message(payload)
       m = {action: payload[0], resource: payload[1], id: payload[2]}
+      m[:client_name] = Viki::Queue.client_name unless Viki::Queue.client_name.nil?
       m[:payload] = payload[3] unless payload[3].nil?
       m
     end

@@ -34,6 +34,15 @@ describe Viki::Queue do
       end
     end
 
+    it "writes the client name" do
+      assert({action: 'create', resource: 'kitten', client_name: 'testing', id: '22k'}) do
+        orig = Viki::Queue.client_name
+        Viki::Queue.client_name = "testing"
+        Viki::Queue.service.create_message(:kitten, '22k')
+        Viki::Queue.client_name = orig
+      end
+    end
+
     private
 
     def assert(message, total=1)
