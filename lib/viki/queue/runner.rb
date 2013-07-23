@@ -19,7 +19,12 @@ module Viki::Queue
             for i in 1..10 do
               begin
                 payload = Oj.load(message, symbol_keys: true)
-                payload[:_meta] = {timestamp: metadata.timestamp}
+                if payload[:_meta]
+                  payload[:_meta][:timestamp] = metadata.timestamp
+                else
+                  payload[:_meta] = {timestamp: metadata.timestamp}
+                end
+
                 if process(router, payload) == true
                   processed = true
                   metadata.ack
