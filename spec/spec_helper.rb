@@ -10,6 +10,7 @@ RSpec.configure do |config|
       c.port = 5672
       c.username = 'guest'
       c.password = 'guest'
+      c.client_name = 'testing'
     end
   }
 end

@@ -13,6 +13,7 @@ module Viki
 
     def self.configure(&block)
       block.call self
+      raise "Viki::Queue.client_name not set" unless client_name
       nil
     end
 
