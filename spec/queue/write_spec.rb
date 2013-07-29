@@ -43,14 +43,24 @@ describe Viki::Queue do
       end
     end
 
+    it "writes to the specified route" do
+      assert({action: 'create', resource: 'kitten', _meta: {client_name: 'testing'}, id: '22k', _meta: {client_name: 'testing'}}, 1, 'api.v4.kitten.create') do
+        orig = Viki::Queue.client_name
+        Viki::Queue.client_name = "testing"
+        Viki::Queue.service.create_message(:kitten, '22k', nil, {route: 'api.v4'})
+        Viki::Queue.client_name = orig
+      end
+    end
+
     private
 
-    def assert(message, total=1)
+    def assert(message, total=1, route = nil)
       EventMachine.run do
         connection = AMQP.connect(host: Viki::Queue.host, port: Viki::Queue.port)
         channel = AMQP::Channel.new(connection)
         q = channel.queue("", exclusive: true)
         routing_key = message.class == Array ? "resources.#" : "resources.#{message[:resource]}.#"
+        routing_key = route unless route.nil?
         q.bind("general", routing_key: routing_key) do
           yield
         end

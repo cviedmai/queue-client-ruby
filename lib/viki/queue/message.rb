@@ -1,15 +1,15 @@
 module Viki::Queue
   module Message
-    def create_message(resource, id, payload=nil)
-      write(prepare_message([:create, resource, id, payload]))
+    def create_message(resource, id, payload=nil, data = {})
+      write(prepare_message([:create, resource, id, payload]), data)
     end
 
-    def update_message(resource, id, payload=nil)
-      write(prepare_message([:update, resource, id, payload]))
+    def update_message(resource, id, payload=nil, data = {})
+      write(prepare_message([:update, resource, id, payload]), data)
     end
 
-    def delete_message(resource, id, payload=nil)
-      write(prepare_message([:delete, resource, id, payload]))
+    def delete_message(resource, id, payload=nil, data = {})
+      write(prepare_message([:delete, resource, id, payload]), data)
     end
 
     def bulk(*events)
@@ -18,8 +18,9 @@ module Viki::Queue
 
     private
 
-    def write(payload)
-      routing_key = "#{Viki::Queue._service.routing}.#{payload[:resource]}.#{payload[:action]}"
+    def write(payload, data = {})
+      route = data.include?(:route) ? data[:route] : Viki::Queue._service.routing
+      routing_key = "#{route}.#{payload[:resource]}.#{payload[:action]}"
       message = Oj.dump(payload, mode: :compat)
       opts = {routing_key: routing_key, timestamp: Time.now.to_i, persistent: true}
       attemps = 5
