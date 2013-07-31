@@ -3,12 +3,15 @@ require 'bunny'
 
 module Viki
   module Queue
-    @host = 'localhost'
-    @port = 5672
-    @username = 'guest'
-    @password = 'guest'
+    EXCHANGE = "general"
+    MESSAGE_SETTING = {durable: true}
+    DEFAULT_SETTINGS = {host: 'localhost', port: 5672, username: 'guest', password: 'guest'}
+
+    @reader = DEFAULT_SETTINGS.clone
+    @writer = DEFAULT_SETTINGS.clone
+
     class << self
-      attr_accessor :host, :port, :username, :password, :client_name, :_service
+      attr_accessor :reader, :writer, :client_name, :_service
     end
 
     def self.configure(&block)

@@ -2,11 +2,19 @@
 
 ## Configuration
     Viki::Queue.configure do |config|
-      config.client_name = "my_app"
-      config.host = "queue.dev.viki.io"
-      config.port = "5672"
-      config.username = "username"
-      config.password = "password"
+      config.client_name = "my_app_name"
+      config.reader = {
+        host: "queue.dev.viki.io",
+        port: 5672,
+        username: "reader",
+        password: "reader_pwd"
+      }
+      config.writer = {
+        host: "queue.dev.viki.io",
+        port: 5672,
+        username: "writer",
+        password: "writer_pwd"
+      }
     end
 
 It defaults to localhost queues.
@@ -34,7 +42,7 @@ You can delete a queue and all of its queued events:
     queue_service.delete('gaia_applications')
 
 ## Routing
-By default, all the messages will be routed under `resources.RESOURCE_NAME.ACTION`, e.g. `resources.videos.create`.It is possible to modify the root of the route.
+By default, all the messages will be routed under `resources.RESOURCE_NAME.ACTION`, e.g. `resources.videos.create`. It is possible to modify the root of the route.
 
     queue_service.route('delayed_jobs.subbing')
     queue_service.create_message(:compile, '3v')

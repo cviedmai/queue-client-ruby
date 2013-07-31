@@ -56,7 +56,13 @@ describe Viki::Queue do
 
     def assert(message, total=1, route = nil)
       EventMachine.run do
-        connection = AMQP.connect(host: Viki::Queue.host, port: Viki::Queue.port)
+        connection = AMQP.connect({
+            host: Viki::Queue.reader[:host],
+            port: Viki::Queue.reader[:port],
+            username: Viki::Queue.reader[:username],
+            password: Viki::Queue.reader[:password]
+          })
+
         channel = AMQP::Channel.new(connection)
         q = channel.queue("", exclusive: true)
         routing_key = message.class == Array ? "resources.#" : "resources.#{message[:resource]}.#"

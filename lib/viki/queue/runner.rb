@@ -8,13 +8,15 @@ module Viki::Queue
       begin
         EventMachine.run do
           connection = AMQP.connect({
-            host: Viki::Queue.host,
-            port: Viki::Queue.port,
-            username: Viki::Queue.username,
-            password: Viki::Queue.password})
+            host: Viki::Queue.reader[:host],
+            port: Viki::Queue.reader[:port],
+            username: Viki::Queue.reader[:username],
+            password: Viki::Queue.reader[:password]
+          })
+          
           channel = AMQP::Channel.new(connection)
           loops = 0
-          channel.prefetch(1).queue(queue, :durable => true).subscribe(:ack => true) do |metadata, message|
+          channel.prefetch(1).queue(queue, MESSAGE_SETTING).subscribe(:ack => true) do |metadata, message|
             processed = false
             for i in 1..10 do
               begin

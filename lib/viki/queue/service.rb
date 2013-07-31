@@ -7,17 +7,18 @@ module Viki::Queue
 
     def initialize(opts={})
       @connection = Bunny.new({
-        host: Viki::Queue.host,
-        port: Viki::Queue.port,
-        username: Viki::Queue.username,
-        password: Viki::Queue.password,
+        host: Viki::Queue.writer[:host],
+        port: Viki::Queue.writer[:port],
+        username: Viki::Queue.writer[:username],
+        password: Viki::Queue.writer[:password],
         keepalive: true,
         threaded: false,
         socket_timeout: 0,
-        connect_timeout: 0})
+        connect_timeout: 0
+      })
       @connection.start
       @channel = @connection.create_channel
-      @exchange = @channel.topic("general", durable: true)
+      @exchange = @channel.topic(EXCHANGE, MESSAGE_SETTING)
       @routing = opts.fetch(:routing, 'resources')
     end
 
@@ -28,13 +29,13 @@ module Viki::Queue
 
     def subscribe(queue, resources)
       resources.each do |r|
-        @channel.queue(queue, durable: true).bind(@exchange, :routing_key => "#{@routing}.#{r}.#")
+        @channel.queue(queue, MESSAGE_SETTING).bind(@exchange, routing_key: get_routing_key(@routing, r))
       end
     end
 
     def unsubscribe(queue, resources)
       resources.each do |r|
-        @channel.queue(queue, durable: true).unbind(@exchange, :routing_key => "#{@routing}.#{r}.#")
+        @channel.queue(queue, MESSAGE_SETTING).unbind(@exchange, routing_key: get_routing_key(@routing, r))
       end
     end
 
@@ -45,7 +46,15 @@ module Viki::Queue
     end
 
     def delete(queue)
-      @channel.queue(queue, durable: true).delete()
+      @channel.queue(queue, MESSAGE_SETTING).delete()
+    end
+
+    private
+
+    def get_routing_key(base, resource, action='#')
+      k = "#{resource}.#{action}"
+      k = "#{base}." + k unless @routing.empty?
+      k
     end
   end
 end
