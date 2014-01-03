@@ -13,8 +13,18 @@ module Viki::Queue
             username: Viki::Queue.reader[:username],
             password: Viki::Queue.reader[:password]
           })
+
+          connection.on_tcp_connection_loss do |conn, settings|
+            conn.reconnect
+          end
+
+          connection.on_recovery do
+            Viki::Queue::Logger.log("Recovered connection @ #{Time.now}")
+          end
+
           
           channel = AMQP::Channel.new(connection)
+          channel.auto_recovery = true
           loops = 0
           channel.prefetch(1).queue(queue, MESSAGE_SETTING).subscribe(:ack => true) do |metadata, message|
             processed = false
