@@ -93,7 +93,7 @@ The events will be queued in-order.
 
 Consumption involves using the built-in runner and providing a routing class:
 
-    Class GaiaRouter
+    class GaiaRouter
       def self.delete_application(event)
         # do something
         true
