@@ -18,8 +18,8 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "rspec", ">= 2.12.0"
 
-  gem.add_runtime_dependency "bunny", "0.9.0.pre7"
-  gem.add_runtime_dependency "eventmachine", "1.0.0"
-  gem.add_runtime_dependency "amqp", "0.9.8"
-  gem.add_runtime_dependency "oj", "2.0.5"
+  gem.add_runtime_dependency "bunny", ">= 0.9.0"
+  gem.add_runtime_dependency "eventmachine", ">= 1.0.0"
+  gem.add_runtime_dependency "amqp", ">= 0.9.8"
+  gem.add_runtime_dependency "oj", ">= 2.0.5"
 end
