@@ -49,6 +49,8 @@ module Viki::Queue
     end
 
     def prepare_message(payload)
+      raise "Id not valid" if payload[2].nil? || payload[2] == ''
+      raise "Id not valid" unless payload[2].kind_of?(String) || payload[2].kind_of?(Integer)
       m = {action: payload[0], resource: payload[1], id: payload[2], _meta: {client_name: Viki::Queue.client_name}}
       m[:payload] = payload[3] unless payload[3].nil?
       m
